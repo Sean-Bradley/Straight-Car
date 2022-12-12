@@ -16,13 +16,13 @@ Play : [https://sc.sbcode.net](https://sc.sbcode.net)
 1. Clone Repository
 
 ```bash
-git clone https://github.com/Sean-Bradley/Ball-VR.git
+git clone https://github.com/Sean-Bradley/Straight-Car.git
 ```
 
 2. CD into folder
 
 ```bash
-cd Ball-VR
+cd Straight-Car
 ```
 
 3. Install TypeScript
