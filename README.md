@@ -1,8 +1,10 @@
 # Straight Car
 
+Can you get to the finish line
+
 Play : [https://sc.sbcode.net](https://sc.sbcode.net)
 
-![Striaght Car](./docs/demo.gif)
+![Straight Car](./docs/demo.gif)
 
 ### Desktop
 
