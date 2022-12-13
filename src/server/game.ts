@@ -7,11 +7,11 @@ export default class Game {
     recentWinners = [
         { screenName: 'fcs', score: 293.8 },
         { screenName: 'sbcode', score: 232.5 },
-        { screenName: 'SeanWasEre', score: 157.7 },
+        { screenName: 'seanwasere', score: 157.7 },
         { screenName: 'cosmo', score: 251.3 },
         { screenName: 'emmy', score: 267.1 },
         { screenName: 'ball-vr', score: 275.2 },
-        { screenName: 'ballgame', score: 286.4 },
+        { screenName: 'seanwasere', score: 147.2 },
     ]
     winnersCalculated = false
 
@@ -110,7 +110,7 @@ export default class Game {
 
         //add all players with score > 0
         Object.keys(this.players).forEach((p) => {
-            if (this.players[p].r > 60) {
+            if (this.players[p].r > 60 && this.players[p].f) {
                 this.recentWinners.push({
                     screenName: this.players[p].sn,
                     score: this.players[p].r, // race time
