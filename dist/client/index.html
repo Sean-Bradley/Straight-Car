@@ -36,10 +36,10 @@
 
             #instructions {
                 background-color: rgba(0, 0, 0, 0.5);
-                height: 420px;
-                width: 500px;
-                margin-top: -210px;
-                margin-left: -250px;
+                height: 500px;
+                width: 700px;
+                margin-top: -250px;
+                margin-left: -350px;
                 position: relative;
                 top: 50%;
                 left: 50%;
@@ -48,6 +48,11 @@
                 text-align: center;
                 pointer-events: none;
                 font-style: italic;
+            }
+
+            #instructions a {
+                color: lime;
+                pointer-events: auto;
             }
 
             #keyboardControls {
@@ -77,8 +82,8 @@
             kbd {
                 padding: 0px 2px;
                 border: 1px solid rgb(255, 255, 255);
-                border-radius: 1px;
-                background: rgba(0, 0, 0, 0.1);
+                border-radius: 4px;
+                background: grey;
                 font-size: 17px;
                 color: white;
                 font-family: monospace;
@@ -102,7 +107,8 @@
             }
 
             h1 {
-                font-size: 48px;
+                font-size: 52px;
+                line-height: 4px;
             }
 
             #screenNameInput {
@@ -171,6 +177,10 @@
             <div id="instructions">
                 <h1>STRAIGHT CAR</h1>
                 <h2>Can you get to the finish line</h2>
+                <p>
+                    GitHub :
+                    <a href="https://github.com/Sean-Bradley/Straight-Car" target="_blank">https://github.com/Sean-Bradley/Straight-Car</a>
+                </p>
                 <div id="keyboardControls">
                     Forward : <kbd>W</kbd> or <kbd>Arrow Up</kbd><br />
                     Backward : <kbd>S</kbd> or <kbd>Arrow Down</kbd><br />
@@ -182,6 +192,10 @@
                     <input type="text" id="screenNameInput" maxlength="12" onClick="this.select();" />
                 </div>
                 <button id="startButton">Click to Start</button>
+                <p>
+                    This is a multiplayer game constructed using Threejs, SocketIO and Cannonjs physics. It is supplemental to my Three.js and TypeScript tutorials at
+                    <a href="https://sbcode.net/threejs/" target="_blank">https://sbcode.net/threejs/</a>
+                </p>
             </div>
         </div>
         <div id="winnerPanel">
