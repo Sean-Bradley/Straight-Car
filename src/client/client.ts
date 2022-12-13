@@ -37,6 +37,14 @@ document.body.appendChild(labelRenderer.domElement)
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.target.set(0, 18, 0)
 controls.autoRotate = true
+// controls.keys = {
+//     LEFT: 'ArrowLeft', //left arrow
+//     UP: 'ArrowUp', // up arrow
+//     RIGHT: 'ArrowRight', // right arrow
+//     BOTTOM: 'ArrowDown', // down arrow
+// }
+// controls.keyPanSpeed = 50
+// controls.listenToKeyEvents(document.documentElement)
 
 const world = new CANNON.World()
 world.gravity.set(0, -9.82, 0)

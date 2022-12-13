@@ -9,6 +9,14 @@ import Trees from './trees'
 import Start from './start'
 import Finish from './finish'
 import Unicorn from './unicorn'
+import Mushroom from './mushroom'
+import Pumpkin from './pumpkin'
+import Duck from './duck'
+import Chicken from './chicken'
+import Shoebill from './shoebill'
+import Spider from './spider'
+import Leprechaun from './leprechaun'
+import Coins from './coins'
 import UI from './ui'
 import { io } from 'socket.io-client'
 import Player from './player'
@@ -147,6 +155,22 @@ export default class Game {
             new Trees(this.scene, this.terrain, [50, 50, 50], this.gltfLoader, this.raycaster, nextRandom)
 
             new Unicorn(this.scene, this.terrain, gltfLoader, raycaster)
+
+            new Mushroom(this.scene, this.terrain, gltfLoader, raycaster)
+
+            new Pumpkin(this.scene, this.terrain, gltfLoader, raycaster)
+
+            new Duck(this.scene, this.terrain, gltfLoader, raycaster)
+
+            new Chicken(this.scene, this.terrain, gltfLoader, raycaster)
+
+            new Shoebill(this.scene, this.terrain, gltfLoader, raycaster)
+
+            new Spider(this.scene, this.terrain, gltfLoader, raycaster)
+
+            new Leprechaun(this.scene, this.terrain, gltfLoader, raycaster)
+
+            new Coins(this.scene, this.terrain, gltfLoader, raycaster)
 
             this.ready = true
         }
