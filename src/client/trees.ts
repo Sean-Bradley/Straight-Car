@@ -17,7 +17,7 @@ export default class Trees {
                 trees[i].position.set((Number(nextRandom(1)) + 0.1) * 200 * ((Number(nextRandom(1)) * 2) | 0 || -1), 5, (Number(nextRandom(1)) - 0.5) * 1600)
                 raycaster.set(new Vector3(trees[i].position.x, 100, trees[i].position.z), down)
                 const intersects = raycaster.intersectObject(terrain.mesh, false)
-                intersects.length ? (trees[i].position.y = intersects[0].point.y - 0.1) : (trees[i].position.y = -0.1)
+                intersects.length ? (trees[i].position.y = intersects[0].point.y - 0.5) : (trees[i].position.y = -0.5)
                 trees[i].scale.setScalar(1 + Number(nextRandom(1)) * 10)
                 //trees[i].castShadow = true
                 scene.add(trees[i])
@@ -32,7 +32,7 @@ export default class Trees {
                 trees[i].position.set((Number(nextRandom(1)) + 0.1) * 200 * ((Number(nextRandom(1)) * 2) | 0 || -1), 5, (Number(nextRandom(1)) - 0.5) * 1600)
                 raycaster.set(new Vector3(trees[i].position.x, 100, trees[i].position.z), down)
                 const intersects = raycaster.intersectObject(terrain.mesh, false)
-                intersects.length ? (trees[i].position.y = intersects[0].point.y - 0.1) : (trees[i].position.y = -0.1)
+                intersects.length ? (trees[i].position.y = intersects[0].point.y - 0.5) : (trees[i].position.y = -0.5)
                 trees[i].scale.setScalar(1 + Number(nextRandom(1)) * 10)
                 //trees[i].castShadow = true
                 scene.add(trees[i])
@@ -47,7 +47,7 @@ export default class Trees {
                 trees[i].position.set((Number(nextRandom(1)) + 0.1) * 200 * ((Number(nextRandom(1)) * 2) | 0 || -1), 5, (Number(nextRandom(1)) - 0.5) * 1600)
                 raycaster.set(new Vector3(trees[i].position.x, 100, trees[i].position.z), down)
                 const intersects = raycaster.intersectObject(terrain.mesh, false)
-                intersects.length ? (trees[i].position.y = intersects[0].point.y - 0.1) : (trees[i].position.y = -0.1)
+                intersects.length ? (trees[i].position.y = intersects[0].point.y - 0.5) : (trees[i].position.y = -0.5)
                 trees[i].scale.setScalar(1 + Number(nextRandom(1)) * 10)
                 //trees[i].castShadow = true
                 scene.add(trees[i])

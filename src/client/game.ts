@@ -8,6 +8,7 @@ import Logs from './logs'
 import Trees from './trees'
 import Start from './start'
 import Finish from './finish'
+import Unicorn from './unicorn'
 import UI from './ui'
 import { io } from 'socket.io-client'
 import Player from './player'
@@ -144,6 +145,8 @@ export default class Game {
             this.logs = new Logs(this.scene, this.world, this.terrain, 25, this.gltfLoader, this.textureLoader, this.raycaster, nextRandom)
 
             new Trees(this.scene, this.terrain, [50, 50, 50], this.gltfLoader, this.raycaster, nextRandom)
+
+            new Unicorn(this.scene, this.terrain, gltfLoader, raycaster)
 
             this.ready = true
         }

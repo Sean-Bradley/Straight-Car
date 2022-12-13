@@ -90,6 +90,7 @@ class Game {
                     else {
                         this.players[socket.id].r = 0;
                     }
+                    //console.log(message.p.z)
                 }
             });
             socket.on('spawn', () => {
