@@ -183,7 +183,7 @@ export default class Game {
             (this.car.update(delta, this.camera, this.ui),
             this.boulders?.update(),
             this.logs?.update(),
-            this.start?.update(delta),
+            //this.start?.update(delta),
             this.finish?.update(delta),
             Object.keys(this.players).forEach((p) => {
                 this.players[p].update()

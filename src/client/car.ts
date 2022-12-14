@@ -36,8 +36,11 @@ export default class Car {
     private world: World
     private socket: Socket
 
-    carSound?: PositionalAudio
-    rattleSound?: PositionalAudio
+    private startEngineSound?: Audio
+    private carEngineSound?: PositionalAudio
+    private rattleSound: PositionalAudio[] = []
+
+    private KeyRHeldDown = false
 
     constructor(scene: Scene, world: World, loader: GLTFLoader, socket: Socket) {
         //, completeCB: (id: number) => void) {
@@ -99,10 +102,11 @@ export default class Car {
         this.frameBody.position.set(0, 0, 0)
 
         this.frameBody.addEventListener('collide', (e: any) => {
-            if (this.rattleSound !== undefined) {
-                this.rattleSound.setVolume(Math.abs(e.contact.getImpactVelocityAlongNormal()) / 25)
-                this.rattleSound.stop()
-                this.rattleSound.play()
+            const r = Math.round(Math.random()) // 1 or 0
+            if (this.rattleSound[r] !== undefined) {
+                this.rattleSound[r].setVolume(Math.abs(e.contact.getImpactVelocityAlongNormal()) / 25)
+                if (this.rattleSound[r].isPlaying) this.rattleSound[r].stop()
+                this.rattleSound[r].play()
             }
         })
 
@@ -160,31 +164,50 @@ export default class Car {
         this.constraintRB.enableMotor()
     }
 
-    playCarSound(listener: AudioListener, audioLoader: AudioLoader) {
-        if (this.carSound === undefined && this.rattleSound === undefined) {
-            console.log('setting up carSound')
-            this.carSound = new PositionalAudio(listener)
-            audioLoader.load('./sounds/engine.wav', (buffer) => {
-                this.carSound?.setBuffer(buffer)
-                this.carSound?.setLoop(true)
-                this.carSound?.setVolume(0.5)
-                this.carSound?.play()
+    playCarSounds(listener?: AudioListener, audioLoader?: AudioLoader) {
+        if (this.carEngineSound === undefined) {
+            console.log('loading all car related audios')
+
+            this.startEngineSound = new Audio(listener as AudioListener)
+            audioLoader?.load('./sounds/enginestart.wav', (buffer) => {
+                this.startEngineSound?.setBuffer(buffer)
+                this.startEngineSound?.setLoop(false)
+                this.startEngineSound?.setVolume(0.25)
+                this.startEngineSound?.play()
             })
 
-            this.frameMesh.add(this.carSound as PositionalAudio)
-
-            this.rattleSound = new PositionalAudio(listener)
-            audioLoader.load('./sounds/crash.wav', (buffer) => {
-                this.rattleSound?.setBuffer(buffer)
-                this.rattleSound?.setLoop(false)
-                this.rattleSound?.setVolume(0.5)
-                this.rattleSound?.play()
+            this.carEngineSound = new PositionalAudio(listener as AudioListener)
+            audioLoader?.load('./sounds/engine.wav', (buffer) => {
+                this.carEngineSound?.setBuffer(buffer)
+                this.carEngineSound?.setLoop(true)
+                this.carEngineSound?.play()
             })
-            this.frameMesh.add(this.rattleSound as PositionalAudio)
+
+            this.frameMesh.add(this.carEngineSound as PositionalAudio)
+
+            this.rattleSound.push(new PositionalAudio(listener as AudioListener))
+            audioLoader?.load('./sounds/crash.wav', (buffer) => {
+                this.rattleSound[0].setBuffer(buffer)
+                this.rattleSound[0].setLoop(false)
+            })
+            this.frameMesh.add(this.rattleSound[0] as PositionalAudio)
+
+            this.rattleSound.push(new PositionalAudio(listener as AudioListener))
+            audioLoader?.load('./sounds/crash2.wav', (buffer) => {
+                this.rattleSound[1].setBuffer(buffer)
+                this.rattleSound[1].setLoop(false)
+            })
+            this.frameMesh.add(this.rattleSound[1] as PositionalAudio)
+        } else {
+            if (this.startEngineSound?.isPlaying) this.startEngineSound?.stop()
+            this.startEngineSound?.play()
+            if (this.carEngineSound?.isPlaying) this.carEngineSound?.stop()
+            this.carEngineSound?.play()
         }
     }
+
     stopCarSound() {
-        this.carSound?.stop()
+        if (this.carEngineSound?.isPlaying) this.carEngineSound?.stop()
     }
 
     update(delta: number, camera: THREE.PerspectiveCamera, ui: UI) {
@@ -209,8 +232,14 @@ export default class Car {
             }
 
             if (ui.keyMap['KeyR']) {
-                this.spawn(new Vector3(0, 10, 780))
-                ui.resetTimer()
+                if (!this.KeyRHeldDown) {
+                    this.KeyRHeldDown = true
+                    this.spawn(new Vector3(0, 10, 780))
+                    this.playCarSounds()
+                    ui.resetTimer()
+                }
+            } else {
+                this.KeyRHeldDown = false
             }
 
             if (ui.keyMap['Escape']) {
@@ -296,7 +325,7 @@ export default class Car {
             Object.keys(this.explosions).forEach((o) => {
                 this.explosions[o].update()
             })
-            ;(this.carSound as PositionalAudio).setPlaybackRate(Math.abs(this.forwardVelocity / 35) + Math.random() / 9)
+            ;(this.carEngineSound as PositionalAudio).setPlaybackRate(Math.abs(this.forwardVelocity / 35) + Math.random() / 9)
         }
     }
 

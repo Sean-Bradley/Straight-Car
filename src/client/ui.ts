@@ -42,7 +42,7 @@ export default class UI {
                     this.listener = new AudioListener()
                     camera.add(this.listener)
                 }
-                car.playCarSound(this.listener, this.audioLoader)
+                car.playCarSounds(this.listener, this.audioLoader)
                 Object.keys(players).forEach((p) => {
                     players[p].playCarSound(this.listener as AudioListener, this.audioLoader)
                 })
@@ -95,6 +95,7 @@ export default class UI {
     }
 
     closeGame() {
+        this.car.stopCarSound()
         this.resetTimer()
         this.menuPanel.style.display = 'block'
         this.gameClock.style.display = 'none'

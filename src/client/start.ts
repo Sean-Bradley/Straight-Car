@@ -14,7 +14,13 @@ export default class Start {
             scene.add(mesh)
 
             const barrier = new Mesh(new PlaneGeometry(10, 1.5), new MeshBasicMaterial())
-            this.texture = textureLoader.load('./img/start.jpg')
+            this.texture = textureLoader.load('./img/start.jpg', () => {
+                // now texture is loaded, allow updating it on render
+                this.update = (delta: number) => {
+                    this.texture.offset.x += delta % 1
+                    this.texture.needsUpdate = true
+                }
+            })
             this.texture.wrapS = RepeatWrapping
             barrier.material.map = this.texture
             barrier.material.transparent = true
@@ -36,15 +42,10 @@ export default class Start {
             })
 
             world.addBody(trigger)
-
-            this.update = (delta: number) => {
-                this.texture.offset.x += delta % 1
-                this.texture.needsUpdate = true
-            }
         })
     }
 
     update(delta: number) {
-        //do not edit this. The function body is created when object is activated
+        // do not edit this. The function body is created after texture is setup
     }
 }

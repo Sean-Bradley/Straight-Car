@@ -72,11 +72,12 @@ export default class Player {
                 this.carSound?.setLoop(true)
                 this.carSound?.setVolume(0.5)
                 this.carSound?.play()
-                console.log("playing players audio")
+                console.log('playing players audio')
             })
             this.frameMesh.add(this.carSound as PositionalAudio)
         }
     }
+
     stopCarSound() {
         this.carSound?.stop()
     }
@@ -95,9 +96,8 @@ export default class Player {
         this.targetPosWheelRF.set(data.w[1].p.x, data.w[1].p.y, data.w[1].p.z)
         this.targetPosWheelLB.set(data.w[2].p.x, data.w[2].p.y, data.w[2].p.z)
         this.targetPosWheelRB.set(data.w[3].p.x, data.w[3].p.y, data.w[3].p.z)
-        
+
         this.carSound !== undefined && (this.carSound as PositionalAudio).setPlaybackRate(Math.abs(data.v / 35) + Math.random() / 9)
-  
     }
 
     update() {
