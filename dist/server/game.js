@@ -7,13 +7,16 @@ const player_1 = __importDefault(require("./player"));
 class Game {
     constructor(io) {
         this.recentWinners = [
-            { screenName: 'fcs', score: 293.8 },
-            { screenName: 'sbcode', score: 232.5 },
+            { screenName: 'seanwasere', score: 147.2 },
+            { screenName: 'seanwasere', score: 147.4 },
+            { screenName: 'seanwasere', score: 153.7 },
             { screenName: 'seanwasere', score: 157.7 },
+            { screenName: 'sbcode', score: 232.5 },
             { screenName: 'cosmo', score: 251.3 },
             { screenName: 'emmy', score: 267.1 },
             { screenName: 'ball-vr', score: 275.2 },
-            { screenName: 'seanwasere', score: 147.2 },
+            { screenName: 'fcs', score: 293.8 },
+            { screenName: 'wtf', score: 999.9 },
         ];
         this.winnersCalculated = false;
         this.players = {};
@@ -37,7 +40,7 @@ class Game {
             //sort
             this.recentWinners.sort((a, b) => (a.score > b.score ? 1 : b.score > a.score ? -1 : 0));
             //keep top scores
-            while (this.recentWinners.length > 7) {
+            while (this.recentWinners.length > 9) {
                 this.recentWinners.pop();
             }
             // if (lowestScoreScreenName != '') {
