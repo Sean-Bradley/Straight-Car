@@ -53,7 +53,7 @@ For more in depth information on production server deployment options, such as S
 
 Q. But, I want a car that can turn?
 
-A. The car in [Straight Car](https://sc.sbcode.net/), doesn't turn. Visit https://github.com/Sean-Bradley/First-Car-Shooter
+A. The car in [Straight Car](https://sc.sbcode.net/), doesn't turn. Try instead https://github.com/Sean-Bradley/First-Car-Shooter
 
 ## Support
 
