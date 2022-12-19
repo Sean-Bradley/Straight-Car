@@ -1,18 +1,33 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { Vector3, PerspectiveCamera, AudioListener, Audio, AudioLoader } from 'three'
+import {
+    Vector3,
+    PerspectiveCamera,
+    AudioListener,
+    Audio,
+    AudioLoader,
+} from 'three'
 import Car from './car'
 import { Socket } from 'socket.io-client'
 import Player from './player'
+import { blob } from 'stream/consumers'
 
 export default class UI {
     keyMap: { [id: string]: boolean } = {}
     timerValue = 0
     timerInterval?: NodeJS.Timer
     startButton = document.getElementById('startButton') as HTMLButtonElement
+    fwdButton = document.getElementById('fwdButton') as HTMLButtonElement
+    bwdButton = document.getElementById('bwdButton') as HTMLButtonElement
+    respawnButton = document.getElementById(
+        'respawnButton'
+    ) as HTMLButtonElement
+    brakeButton = document.getElementById('brakeButton') as HTMLButtonElement
     menuPanel = document.getElementById('menuPanel') as HTMLDivElement
     gameClock = document.getElementById('gameClock') as HTMLDivElement
     winnerPanel = document.getElementById('winnerPanel') as HTMLDivElement
-    screenNameInput = document.getElementById('screenNameInput') as HTMLInputElement
+    screenNameInput = document.getElementById(
+        'screenNameInput'
+    ) as HTMLInputElement
     controls: OrbitControls
     camera: PerspectiveCamera
     car: Car
@@ -20,13 +35,53 @@ export default class UI {
     private recentWinnersTable: HTMLTableElement
     listener?: AudioListener
     audioLoader = new AudioLoader()
+    isMobile = false
+    constructor(
+        controls: OrbitControls,
+        camera: PerspectiveCamera,
+        car: Car,
+        players: { [id: string]: Player },
+        socket: Socket
+    ) {
+        if (
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+                navigator.userAgent
+            )
+        ) {
+            this.isMobile = true
+            this.fwdButton.addEventListener('pointerdown', () => {
+                this.keyMap['KeyW'] = true
+            })
+            this.fwdButton.addEventListener('pointerup', (e) => {
+                this.keyMap['KeyW'] = false
+            })
+            this.bwdButton.addEventListener('pointerdown', () => {
+                this.keyMap['KeyS'] = true
+            })
+            this.bwdButton.addEventListener('pointerup', () => {
+                this.keyMap['KeyS'] = false
+            })
+            this.respawnButton.addEventListener('pointerdown', () => {
+                this.keyMap['KeyR'] = true
+            })
+            this.respawnButton.addEventListener('pointerup', () => {
+                this.keyMap['KeyR'] = false
+            })
+            this.brakeButton.addEventListener('pointerdown', () => {
+                this.keyMap['Space'] = true
+            })
+            this.brakeButton.addEventListener('pointerup', () => {
+                this.keyMap['Space'] = false
+            })
+        }
 
-    constructor(controls: OrbitControls, camera: PerspectiveCamera, car: Car, players: { [id: string]: Player }, socket: Socket) {
         this.controls = controls
         this.camera = camera
         this.car = car
         this.cameraStartPosition.copy(camera.position)
-        this.recentWinnersTable = document.getElementById('recentWinnersTable') as HTMLTableElement
+        this.recentWinnersTable = document.getElementById(
+            'recentWinnersTable'
+        ) as HTMLTableElement
 
         this.startButton.addEventListener(
             'click',
@@ -35,6 +90,11 @@ export default class UI {
                 this.gameClock.innerText = this.timerValue.toString()
                 this.gameClock.style.display = 'block'
                 this.recentWinnersTable.style.display = 'block'
+                this.isMobile &&
+                    ((this.fwdButton.style.display = 'block'),
+                    ((this.bwdButton.style.display = 'block'),
+                    (this.respawnButton.style.display = 'block'),
+                    (this.brakeButton.style.display = 'block')))
                 this.controls.enabled = false
                 this.car.spawn(new Vector3(0, 10, 780))
                 this.car.enabled = true
@@ -44,7 +104,10 @@ export default class UI {
                 }
                 car.playCarSounds(this.listener, this.audioLoader)
                 Object.keys(players).forEach((p) => {
-                    players[p].playCarSound(this.listener as AudioListener, this.audioLoader)
+                    players[p].playCarSound(
+                        this.listener as AudioListener,
+                        this.audioLoader
+                    )
                 })
             },
             false
@@ -60,9 +123,14 @@ export default class UI {
             var letterNumber = /^[0-9a-zA-Z]+$/
             var value = (e.target as HTMLFormElement).value
             if (value.match(letterNumber) && value.length <= 12) {
-                socket.emit('updateScreenName', (e.target as HTMLFormElement).value)
+                socket.emit(
+                    'updateScreenName',
+                    (e.target as HTMLFormElement).value
+                )
             } else {
-                alert('Alphanumeric and no spaces for player names. Max length 12')
+                alert(
+                    'Alphanumeric and no spaces for player names. Max length 12'
+                )
             }
         })
     }
@@ -99,6 +167,7 @@ export default class UI {
         this.resetTimer()
         this.menuPanel.style.display = 'block'
         this.gameClock.style.display = 'none'
+        this.isMobile && (this.fwdButton.style.display = 'none')
         this.recentWinnersTable.style.display = 'none'
         this.car.enabled = false
         this.camera.position.copy(this.cameraStartPosition)

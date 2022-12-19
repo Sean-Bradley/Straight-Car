@@ -1,6 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+        />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <title>Three.js TypeScript Tutorials by Sean Bradley</title>
         <style>
             @font-face {
@@ -60,7 +66,7 @@
                 line-height: 32px;
             }
 
-            #startButton {
+            .button {
                 width: 200px;
                 pointer-events: auto;
                 padding: 12px 6px;
@@ -73,10 +79,21 @@
                 cursor: pointer;
                 color: white;
                 margin: 10px;
+                touch-action: manipulation;
             }
 
-            #startButton:hover {
+            .button:hover {
                 opacity: 1;
+            }
+
+            .noselect {
+                -webkit-touch-callout: none; /* iOS Safari */
+                -webkit-user-select: none; /* Safari */
+                -khtml-user-select: none; /* Konqueror HTML */
+                -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
             }
 
             kbd {
@@ -169,17 +186,49 @@
                 pointer-events: none;
                 font-style: italic;
             }
+            #fwdButton {
+                position: absolute;
+                width: 100px;
+                right: 4px;
+                bottom: 64px;
+                display: none;
+            }
+            #bwdButton {
+                position: absolute;
+                width: 100px;
+                right: 4px;
+                bottom: 4px;
+                display: none;
+            }
+            #respawnButton {
+                position: absolute;
+                width: 100px;
+                left: 4px;
+                bottom: 4px;
+                display: none;
+            }
+            #brakeButton {
+                position: absolute;
+                width: 100px;
+                left: 4px;
+                bottom: 64px;
+                display: none;
+            }
         </style>
     </head>
 
-    <body>
+    <body noselect>
         <div id="menuPanel">
             <div id="instructions">
                 <h1>STRAIGHT CAR</h1>
                 <h2>You can only drive straight</h2>
                 <p>
                     GitHub :
-                    <a href="https://github.com/Sean-Bradley/Straight-Car" target="_blank">https://github.com/Sean-Bradley/Straight-Car</a>
+                    <a
+                        href="https://github.com/Sean-Bradley/Straight-Car"
+                        target="_blank"
+                        >https://github.com/Sean-Bradley/Straight-Car</a
+                    >
                 </p>
                 <div id="keyboardControls">
                     Forward : <kbd>W</kbd> or <kbd>Arrow Up</kbd><br />
@@ -189,16 +238,29 @@
                 </div>
                 <div>
                     <label>Player Name :</label>
-                    <input type="text" id="screenNameInput" maxlength="12" onClick="this.select();" />
+                    <input
+                        type="text"
+                        id="screenNameInput"
+                        maxlength="12"
+                        onClick="this.select();"
+                    />
                 </div>
-                <button id="startButton">Click to Start</button>
+                <button id="startButton" class="button">Click to Start</button>
                 <p>
-                    This is a multiplayer game constructed using Threejs, SocketIO and Cannonjs physics.<br/>
-                    It is supplemental to my Three.js and TypeScript tutorials at<br/>
-                    <a href="https://sbcode.net/threejs/" target="_blank">https://sbcode.net/threejs/</a>
+                    This is a multiplayer game constructed using Threejs,
+                    SocketIO and Cannonjs physics.<br />
+                    It is supplemental to my Three.js and TypeScript tutorials
+                    at<br />
+                    <a href="https://sbcode.net/threejs/" target="_blank"
+                        >https://sbcode.net/threejs/</a
+                    >
                 </p>
                 <p>
-                    <a href="https://github.com/Sean-Bradley/Straight-Car/blob/main/LICENSE" target="_blank">Credits/Licenses</a>
+                    <a
+                        href="https://github.com/Sean-Bradley/Straight-Car/blob/main/LICENSE"
+                        target="_blank"
+                        >Credits/Licenses</a
+                    >
                 </p>
             </div>
         </div>
@@ -217,6 +279,10 @@
             </tr>
         </table>
         <div id="gameClock"></div>
+        <button id="respawnButton" class="button noselect">Respawn</button>
+        <button id="brakeButton" class="button noselect">Brakes</button>
+        <button id="fwdButton" class="button noselect">FWD</button>
+        <button id="bwdButton" class="button noselect">BWD</button>
         <script type="module" src="bundle.js"></script>
     </body>
 </html>
