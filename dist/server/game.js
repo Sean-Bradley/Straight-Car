@@ -7,6 +7,7 @@ const player_1 = __importDefault(require("./player"));
 class Game {
     constructor(io) {
         this.recentWinners = [
+            { screenName: 'NewKrok', score: 106.2 },
             { screenName: 'seanwasere', score: 147.2 },
             { screenName: 'seanwasere', score: 147.4 },
             { screenName: 'seanwasere', score: 153.7 },

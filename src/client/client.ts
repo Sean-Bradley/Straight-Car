@@ -11,14 +11,22 @@ import Game from './game'
 
 const scene = new THREE.Scene()
 
-new RGBELoader().load('./img/kloppenheim_06_puresky_1k.hdr', function (texture: THREE.Texture) {
-    texture.mapping = THREE.EquirectangularReflectionMapping
-    scene.background = texture
-    scene.environment = texture
-})
+new RGBELoader().load(
+    './img/kloppenheim_06_puresky_1k.hdr',
+    function (texture: THREE.Texture) {
+        texture.mapping = THREE.EquirectangularReflectionMapping
+        scene.background = texture
+        scene.environment = texture
+    }
+)
 
 const cameraStartPosition = new THREE.Vector3(20, 25, 20)
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+)
 camera.position.copy(cameraStartPosition)
 
 const renderer = new THREE.WebGLRenderer()
@@ -69,7 +77,17 @@ const gltfLoader = new GLTFLoader()
 const textureLoader = new THREE.TextureLoader()
 const raycaster = new THREE.Raycaster()
 
-const game = new Game(scene, world, camera, controls, gltfLoader, textureLoader, raycaster)
+const game = new Game(
+    scene,
+    world,
+    camera,
+    controls,
+    gltfLoader,
+    textureLoader,
+    raycaster
+)
+
+renderer.compile(scene, camera)
 
 window.addEventListener('resize', onWindowResize, false)
 function onWindowResize() {

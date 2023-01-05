@@ -82,3 +82,7 @@ This is only just the beginning of what you will create.
 **Course Discount Coupons** : https://sbcode.net/coupons#threejs
 
 [![ThreeJS and TypeScript Course](docs/threejs-course-image.png)](https://youtu.be/fS4H7gm7gK4)
+
+## The Making of Straight Car
+
+[![Making of Straight Car](https://img.youtube.com/vi/RuJgl03emnk/0.jpg)](https://youtu.be/RuJgl03emnk)

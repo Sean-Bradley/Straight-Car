@@ -5,6 +5,7 @@ export default class Game {
     io: socketIO.Server
 
     recentWinners = [
+        { screenName: 'NewKrok', score: 106.2 },
         { screenName: 'seanwasere', score: 147.2 },
         { screenName: 'seanwasere', score: 147.4 },
         { screenName: 'seanwasere', score: 153.7 },
