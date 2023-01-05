@@ -83,6 +83,8 @@ This is only just the beginning of what you will create.
 
 [![ThreeJS and TypeScript Course](docs/threejs-course-image.png)](https://youtu.be/fS4H7gm7gK4)
 
-## The Making of Straight Car
+## The Making of Straight Car Video
+
+[https://youtu.be/RuJgl03emnk](https://youtu.be/RuJgl03emnk)
 
 [![Making of Straight Car](https://img.youtube.com/vi/RuJgl03emnk/0.jpg)](https://youtu.be/RuJgl03emnk)
