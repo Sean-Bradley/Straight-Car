@@ -20,7 +20,7 @@ export default class Game {
     winnersCalculated = false
 
     players: { [id: string]: Player } = {}
-    playerCount = 0
+    playerCount = 316
 
     constructor(io: socketIO.Server) {
         this.io = io
@@ -31,7 +31,12 @@ export default class Game {
 
             console.log('a user connected : ' + socket.id)
             this.recalcWinnersTable()
-            socket.emit('joined', socket.id, this.players[socket.id].sn, this.recentWinners)
+            socket.emit(
+                'joined',
+                socket.id,
+                this.players[socket.id].sn,
+                this.recentWinners
+            )
 
             socket.on('disconnect', () => {
                 console.log('socket disconnected : ' + socket.id)
@@ -58,9 +63,17 @@ export default class Game {
                     this.players[socket.id].w[3].p = message.w[3].p
                     //this.players[socket.id].w[3].q = message.w[3].q
 
-                    if (this.players[socket.id].e && this.players[socket.id].s > 0) {
+                    if (
+                        this.players[socket.id].e &&
+                        this.players[socket.id].s > 0
+                    ) {
                         if (!this.players[socket.id].f) {
-                            const totalTime = Math.round(((Date.now() - this.players[socket.id].s) / 1000) * 10) / 10
+                            const totalTime =
+                                Math.round(
+                                    ((Date.now() - this.players[socket.id].s) /
+                                        1000) *
+                                        10
+                                ) / 10
                             this.players[socket.id].r = totalTime // race time
                             if (this.players[socket.id].p.z < -750) {
                                 this.players[socket.id].f = true // at finish line
@@ -89,7 +102,10 @@ export default class Game {
 
             socket.on('updateScreenName', (screenName: string) => {
                 console.log(screenName)
-                if (screenName.match(/^[0-9a-zA-Z]+$/) && screenName.length <= 12) {
+                if (
+                    screenName.match(/^[0-9a-zA-Z]+$/) &&
+                    screenName.length <= 12
+                ) {
                     this.players[socket.id].sn = screenName
                 }
             })
@@ -129,7 +145,9 @@ export default class Game {
         })
 
         //sort
-        this.recentWinners.sort((a: any, b: any) => (a.score > b.score ? 1 : b.score > a.score ? -1 : 0))
+        this.recentWinners.sort((a: any, b: any) =>
+            a.score > b.score ? 1 : b.score > a.score ? -1 : 0
+        )
 
         //keep top scores
         while (this.recentWinners.length > 9) {
