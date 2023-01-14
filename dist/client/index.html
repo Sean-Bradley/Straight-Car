@@ -154,6 +154,7 @@
                 color: #00ff00;
                 font-family: monospace;
                 pointer-events: none;
+                user-select: none;
                 font-size: 14px;
                 filter: drop-shadow(1px 1px 1px black);
             }
@@ -169,6 +170,7 @@
                 width: 100%;
                 height: 100%;
                 pointer-events: none;
+                user-select: none;
                 display: none;
             }
             #winnerAlert {
@@ -184,7 +186,22 @@
                 border: 1px solid gray;
                 text-align: center;
                 pointer-events: none;
+                user-select: none;
                 font-style: italic;
+            }
+            #respawnMessage {
+                position: absolute;
+                width: 400px;
+                top: 50%;
+                left: 50%;
+                margin-left: -200px;
+                margin-top: -100px;
+                font-size: 24px;
+                text-align: center;
+                display: none;
+            }
+            #respawnMessage kbd {
+                font-size: 28px;
             }
             #fwdButton {
                 position: absolute;
@@ -214,10 +231,47 @@
                 bottom: 64px;
                 display: none;
             }
+            #mobileButtons {
+                pointer-events: none;
+                user-select: none;
+            }
+
+            @media only screen and (max-width: 375px) {
+                #pingStats {
+                    display: none;
+                }
+
+                h1 {
+                    font-size: 38px;
+                    line-height: 4px;
+                }
+
+                #instructions {
+                    background-color: rgba(0, 0, 0, 0.5);
+                    height: 550px;
+                    width: 300px;
+                    margin-top: -275px;
+                    margin-left: -150px;
+                    position: relative;
+                    font-size: 14px;
+                }
+
+                #recentWinnersTable {
+                    position: absolute;
+                    width: 100px;
+                    height: 120px;
+                    border: 1px solid gray;
+                    right: 10px;
+                    top: 10px;
+                    font-size: 14px;
+                    display: none;
+                    filter: drop-shadow(1px 1px 1px black);
+                }
+            }
         </style>
     </head>
 
-    <body noselect>
+    <body class="noselect">
         <div id="menuPanel">
             <div id="instructions">
                 <h1>STRAIGHT CAR</h1>
@@ -245,7 +299,7 @@
                         onClick="this.select();"
                     />
                 </div>
-                <button id="startButton" class="button">Click to Start</button>
+                <button id="startButton" class="button">Press to Start</button>
                 <p>
                     This is a multiplayer game constructed using Threejs,
                     SocketIO and Cannonjs physics.<br />
@@ -278,11 +332,12 @@
                 <th>Time</th>
             </tr>
         </table>
+        <div id="respawnMessage">DNF : Press <kbd>R</kbd> to Respawn</div>
         <div id="gameClock"></div>
         <button id="respawnButton" class="button noselect">Respawn</button>
         <button id="brakeButton" class="button noselect">Brakes</button>
         <button id="fwdButton" class="button noselect">FWD</button>
-        <button id="bwdButton" class="button noselect">BWD</button>
+        <button id="bwdButton" class="button noselect">REV</button>
         <script type="module" src="bundle.js"></script>
     </body>
 </html>

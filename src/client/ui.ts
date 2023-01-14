@@ -9,7 +9,6 @@ import {
 import Car from './car'
 import { Socket } from 'socket.io-client'
 import Player from './player'
-import { blob } from 'stream/consumers'
 
 export default class UI {
     keyMap: { [id: string]: boolean } = {}
