@@ -21,7 +21,7 @@ class Game {
         ];
         this.winnersCalculated = false;
         this.players = {};
-        this.playerCount = 0;
+        this.playerCount = 316;
         this.recalcWinnersTable = () => {
             let lowestScore = 0;
             let lowestScoreScreenName = '';
@@ -39,7 +39,7 @@ class Game {
                 }
             });
             //sort
-            this.recentWinners.sort((a, b) => (a.score > b.score ? 1 : b.score > a.score ? -1 : 0));
+            this.recentWinners.sort((a, b) => a.score > b.score ? 1 : b.score > a.score ? -1 : 0);
             //keep top scores
             while (this.recentWinners.length > 9) {
                 this.recentWinners.pop();
@@ -79,9 +79,12 @@ class Game {
                     //this.players[socket.id].w[2].q = message.w[2].q
                     this.players[socket.id].w[3].p = message.w[3].p;
                     //this.players[socket.id].w[3].q = message.w[3].q
-                    if (this.players[socket.id].e && this.players[socket.id].s > 0) {
+                    if (this.players[socket.id].e &&
+                        this.players[socket.id].s > 0) {
                         if (!this.players[socket.id].f) {
-                            const totalTime = Math.round(((Date.now() - this.players[socket.id].s) / 1000) * 10) / 10;
+                            const totalTime = Math.round(((Date.now() - this.players[socket.id].s) /
+                                1000) *
+                                10) / 10;
                             this.players[socket.id].r = totalTime; // race time
                             if (this.players[socket.id].p.z < -750) {
                                 this.players[socket.id].f = true; // at finish line
@@ -108,7 +111,8 @@ class Game {
             });
             socket.on('updateScreenName', (screenName) => {
                 console.log(screenName);
-                if (screenName.match(/^[0-9a-zA-Z]+$/) && screenName.length <= 12) {
+                if (screenName.match(/^[0-9a-zA-Z]+$/) &&
+                    screenName.length <= 12) {
                     this.players[socket.id].sn = screenName;
                 }
             });

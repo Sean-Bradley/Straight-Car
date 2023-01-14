@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // `npm run build`        (this creates the production version of bundle.js and places it in ./dist/client/)
 // `tsc -p ./src/server`  (this compiles ./src/server/server.ts into ./dist/server/server.js)
 // `npm start            (this starts nodejs with express and serves the ./dist/client folder)
-// visit http://127.0.0.1:3000
+// visit http://127.0.0.1:3002
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
@@ -20,7 +20,7 @@ const game_1 = __importDefault(require("./game"));
 //dotenv.config({path: __dirname +'/.env'})
 dotenv_1.default.config();
 console.log('process.env.PORT = ' + process.env.PORT);
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3002;
 class App {
     constructor(port) {
         this.port = port;

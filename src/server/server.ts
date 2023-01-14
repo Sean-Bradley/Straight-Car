@@ -6,7 +6,7 @@
 // `npm run build`        (this creates the production version of bundle.js and places it in ./dist/client/)
 // `tsc -p ./src/server`  (this compiles ./src/server/server.ts into ./dist/server/server.js)
 // `npm start            (this starts nodejs with express and serves the ./dist/client folder)
-// visit http://127.0.0.1:3000
+// visit http://127.0.0.1:3002
 
 import dotenv from 'dotenv'
 import express from 'express'
@@ -20,7 +20,7 @@ dotenv.config()
 
 console.log('process.env.PORT = ' + process.env.PORT)
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3002
 
 class App {
     private server: http.Server
