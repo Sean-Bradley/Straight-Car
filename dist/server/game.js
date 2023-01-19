@@ -21,7 +21,7 @@ class Game {
         ];
         this.winnersCalculated = false;
         this.players = {};
-        this.playerCount = 316;
+        this.playerCount = 338;
         this.recalcWinnersTable = () => {
             let lowestScore = 0;
             let lowestScoreScreenName = '';
