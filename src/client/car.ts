@@ -226,6 +226,7 @@ export default class Car {
                     }
                 } else {
                     this.upsideDownCounter = 0
+                    this.respawnMessage.style.display = 'none'
                 }
             }
         }, 1000)
