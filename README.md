@@ -55,6 +55,10 @@ Q. But, I want a car that can turn?
 
 A. The car in [Straight Car](https://sc.sbcode.net/), doesn't turn. Try instead https://github.com/Sean-Bradley/First-Car-Shooter
 
+Q. Why is the game named "Straight Car"?
+
+A. Because the car can only drive straight. It is also a play on the term "street car".
+
 ## Support
 
 To help support my free projects, please take a look at my **ThreeJS and TypeScript** Book
