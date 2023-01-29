@@ -20,7 +20,7 @@ export default class Game {
     winnersCalculated = false
 
     players: { [id: string]: Player } = {}
-    playerCount = 338
+    playerCount = 367
 
     constructor(io: socketIO.Server) {
         this.io = io

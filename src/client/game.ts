@@ -17,6 +17,7 @@ import Shoebill from './shoebill'
 import Spider from './spider'
 import Leprechaun from './leprechaun'
 import Coins from './coins'
+import Rainbow from './rainbow'
 import UI from './ui'
 import { io } from 'socket.io-client'
 import Player from './player'
@@ -40,6 +41,8 @@ export default class Game {
     gltfLoader: GLTFLoader
     textureLoader: TextureLoader
     raycaster: Raycaster
+
+    rainbow?: Rainbow
 
     socket = io()
     myId = ''
@@ -245,15 +248,18 @@ export default class Game {
 
             new Coins(this.scene, this.terrain, gltfLoader, raycaster)
 
+            this.rainbow = new Rainbow(this.scene, this.terrain, gltfLoader)
+
             this.update = (delta: number) => {
                 this.car.update(delta, this.camera, this.ui),
                     this.boulders?.update(),
                     this.logs?.update(),
                     this.start?.update(delta),
                     this.finish?.update(delta),
-                    Object.keys(this.players).forEach((p) => {
-                        this.players[p].update()
-                    })
+                    this.rainbow?.update(this.camera.position)
+                Object.keys(this.players).forEach((p) => {
+                    this.players[p].update()
+                })
             }
         }
 
