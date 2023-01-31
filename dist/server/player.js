@@ -17,6 +17,7 @@ class Player {
             { p: { x: 0, y: 0, z: 0 } }, //, q: { x: 0, y: 0, z: 0, w: 0 } },
         ]; // wheels
         this.t = -1; // ping timestamp
+        this.at = "track0"; // activeTrack
     }
 }
 exports.default = Player;

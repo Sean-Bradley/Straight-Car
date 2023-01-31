@@ -51,13 +51,21 @@ For more in depth information on production server deployment options, such as S
 
 ## FAQs
 
-Q. But, I want a car that can turn?
+### But, I want a car that can turn?
 
-A. The car in [Straight Car](https://sc.sbcode.net/), doesn't turn. Try instead https://github.com/Sean-Bradley/First-Car-Shooter
+> The car in [Straight Car](https://sc.sbcode.net/), doesn't turn. Try instead https://github.com/Sean-Bradley/First-Car-Shooter
 
-Q. Why is the game named "Straight Car"?
+### Why is the game named "Straight Car"?
 
-A. Because the car can only drive straight. It is also a play on the term "street car".
+> Because the car can only drive straight. It is also a play on the term "street car".
+
+### But it's too hard
+
+> It's just a game to help you waste your time. Surely you have better things to put your energy into.
+
+### I don't like something about it
+
+> Read the [license](LICENSE). It is licensed MIT. That means that you get no warranties or guarantees of any kind. The repository is hosted on GitHub. That means that you can make a pull request if you really want to contribute an improvement.
 
 ## Support
 

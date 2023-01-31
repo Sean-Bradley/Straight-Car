@@ -1,18 +1,19 @@
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import UI from './ui'
-import { Mesh, MeshBasicMaterial, PlaneGeometry, RepeatWrapping, TextureLoader, Texture } from 'three'
+import { Vector3, Mesh, MeshBasicMaterial, PlaneGeometry, RepeatWrapping, Texture, Object3D } from 'three'
+import Game from './game'
 
 export default class Finish {
     texture: Texture = new Texture()
-    constructor(scene: THREE.Scene, loader: GLTFLoader, textureLoader: TextureLoader) {
-        loader.load('./models/finish.glb', (gltf) => {
-            const mesh = gltf.scene as THREE.Group
+    mesh = new Object3D()
+
+    constructor(game: Game) {
+        game.gltfLoader.load('./models/finish.glb', (gltf) => {
+            this.mesh = gltf.scene as THREE.Group
             //mesh.traverse((m) => (m.castShadow = true))
-            mesh.position.set(0, 0, -750)
-            scene.add(mesh)
+
+            game.scene.add(this.mesh)
 
             const barrier = new Mesh(new PlaneGeometry(10, 1.5), new MeshBasicMaterial())
-            this.texture = textureLoader.load('./img/finish.jpg', () => {
+            this.texture = game.textureLoader.load('./img/finish.jpg', () => {
                 // now texture is loaded, allow updating it on render
                 this.update = (delta: number) => {
                     this.texture.offset.x += delta % 1
@@ -24,8 +25,16 @@ export default class Finish {
             barrier.material.transparent = true
             barrier.material.opacity = 0.5
             barrier.position.y = 1
-            mesh.add(barrier)
+            this.mesh.add(barrier)
         })
+    }
+
+    configure(game: Game) {
+        this.mesh.position.set(0, 1000, -750)
+        const down = new Vector3(0, -1, 0)
+        game.raycaster.set(this.mesh.position, down)
+        const intersects = game.raycaster.intersectObject(game.terrain.mesh, false)
+        intersects.length ? (this.mesh.position.y = intersects[0].point.y) : (this.mesh.position.y = 5)
     }
 
     update(delta: number) {

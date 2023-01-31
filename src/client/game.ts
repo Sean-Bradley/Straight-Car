@@ -1,5 +1,5 @@
 import { World } from 'cannon-es'
-import { Scene, Raycaster, TextureLoader, PerspectiveCamera } from 'three'
+import { Scene, Raycaster, TextureLoader, PerspectiveCamera, Vector3, WebGLRenderer } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import Terrain from './terrain'
 import Car from './car'
@@ -23,6 +23,10 @@ import { io } from 'socket.io-client'
 import Player from './player'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
+// a seedable RNG. https://gist.github.com/blixt/f17b47c62508be59987b
+// so that obstacles are positioned the same each game.
+const LCG = (s: number) => (_: number) => (s = Math.imul(741103597, s) >>> 0) / 2 ** 32
+
 export default class Game {
     terrain: Terrain
     car: Car
@@ -37,10 +41,21 @@ export default class Game {
     scene: Scene
     world: World
     camera: PerspectiveCamera
+    renderer: WebGLRenderer
     controls: OrbitControls
     gltfLoader: GLTFLoader
     textureLoader: TextureLoader
     raycaster: Raycaster
+
+    unicorn?: Unicorn
+    mushroom?: Mushroom
+    pumpkin?: Pumpkin
+    duck?: Duck
+    chicken?: Chicken
+    shoeBill?: Shoebill
+    spider?: Spider
+    leprechaun?: Leprechaun
+    coins?: Coins
 
     rainbow?: Rainbow
 
@@ -50,10 +65,15 @@ export default class Game {
     timestamp = 0
     players: { [id: string]: Player } = {}
 
+    activeTrack = 'track0'
+    seed = 3816034944
+    nextRandom = LCG(this.seed)
+
     constructor(
         scene: Scene,
         world: World,
         camera: PerspectiveCamera,
+        renderer: WebGLRenderer,
         controls: OrbitControls,
         gltfLoader: GLTFLoader,
         textureLoader: TextureLoader,
@@ -62,19 +82,14 @@ export default class Game {
         this.scene = scene
         this.world = world
         this.camera = camera
+        this.renderer = renderer
         this.controls = controls
         this.gltfLoader = gltfLoader
         this.textureLoader = textureLoader
         this.raycaster = raycaster
 
-        this.car = new Car(this.scene, this.world, this.gltfLoader, this.socket)
-        this.ui = new UI(
-            this.controls,
-            this.camera,
-            this.car,
-            this.players,
-            this.socket
-        )
+        this.car = new Car(this)
+        this.ui = new UI(this)
 
         //sockets
         this.socket.on('connect', function () {
@@ -87,40 +102,36 @@ export default class Game {
                 this.players[p].dispose()
             })
         })
-        this.socket.on(
-            'joined',
-            (id: string, screenName: string, recentWinners: []) => {
-                this.myId = id
-                this.ui.screenNameInput.value = screenName
-                this.ui.menuPanel.style.display = 'block'
+        this.socket.on('joined', (id: string, screenName: string) => {
+            this.myId = id
+            this.ui.screenNameInput.value = screenName
+            this.ui.menuPanel.style.display = 'block'
 
-                this.updateInterval = setInterval(() => {
-                    this.socket.emit('update', {
-                        t: Date.now(),
-                        e: this.car.enabled,
-                        p: this.car.frameMesh.position,
-                        q: this.car.frameMesh.quaternion,
-                        v: this.car.forwardVelocity,
-                        w: [
-                            {
-                                p: this.car.wheelLFMesh.position,
-                            },
-                            {
-                                p: this.car.wheelRFMesh.position,
-                            },
-                            {
-                                p: this.car.wheelLBMesh.position,
-                            },
-                            {
-                                p: this.car.wheelRBMesh.position,
-                            },
-                        ],
-                    })
-                }, 50)
-
-                this.ui.updateScoreBoard(recentWinners)
-            }
-        )
+            this.updateInterval = setInterval(() => { 
+                this.socket.emit('update', {
+                    t: Date.now(),
+                    e: this.car.enabled,
+                    p: this.car.frameMesh.position,
+                    q: this.car.frameMesh.quaternion,
+                    v: this.car.forwardVelocity,
+                    w: [
+                        {
+                            p: this.car.wheelLFMesh.position,
+                        },
+                        {
+                            p: this.car.wheelRFMesh.position,
+                        },
+                        {
+                            p: this.car.wheelLBMesh.position,
+                        },
+                        {
+                            p: this.car.wheelRBMesh.position,
+                        },
+                    ],
+                    at: this.activeTrack,
+                })
+            }, 50)
+        })
         this.socket.on('removePlayer', (p: string) => {
             console.log('deleting player ' + p)
             this.players[p].dispose()
@@ -129,20 +140,12 @@ export default class Game {
 
         this.socket.on('winner', (time) => {
             this.car.explode()
-            ;(
-                document.getElementById('winnerPanel') as HTMLDivElement
-            ).style.display = 'block'
-            ;(
-                document.getElementById('winnerScreenName') as HTMLDivElement
-            ).innerHTML = (
-                document.getElementById('screenNameInput') as HTMLInputElement
-            ).value
-            ;(
-                document.getElementById('winnerTime') as HTMLDivElement
-            ).innerHTML = time + ' sec'
+            ;(document.getElementById('winnerPanel') as HTMLDivElement).style.display = 'block'
+            ;(document.getElementById('winnerScreenName') as HTMLDivElement).innerHTML = (document.getElementById('screenNameInput') as HTMLInputElement).value
+            ;(document.getElementById('winnerTime') as HTMLDivElement).innerHTML = time + ' sec'
         })
 
-        this.socket.on('winnersTable', (recentWinners: []) => {
+        this.socket.on('winnersTable', (recentWinners: { [key: string]: [] }) => {
             this.ui.updateScoreBoard(recentWinners)
         })
 
@@ -150,105 +153,73 @@ export default class Game {
             let pingStatsHtml = 'Socket Ping Stats<br/><br/>'
             Object.keys(gameData.players).forEach((p) => {
                 this.timestamp = Date.now()
-                pingStatsHtml +=
-                    gameData.players[p].sn +
-                    ' ' +
-                    gameData.players[p].r +
-                    ' ' +
-                    (this.timestamp - gameData.players[p].t) +
-                    'ms<br/>'
+                pingStatsHtml += gameData.players[p].sn + ' ' + gameData.players[p].r + ' ' + (this.timestamp - gameData.players[p].t) + 'ms<br/>'
                 if (p !== this.myId) {
                     if (!this.players[p]) {
                         console.log('adding player ' + p)
                         this.players[p] = new Player(scene, gltfLoader)
-                        this.ui.listener !== undefined &&
-                            this.players[p].playCarSound(
-                                this.ui.listener as THREE.AudioListener,
-                                this.ui.audioLoader
-                            )
+                        this.ui.listener !== undefined && this.players[p].playCarSound(this.ui.listener as THREE.AudioListener, this.ui.audioLoader)
                         //console.log(ui.listener)
                     }
                     this.players[p].updateTargets(gameData.players[p])
                 }
             })
-            ;(
-                document.getElementById('pingStats') as HTMLDivElement
-            ).innerHTML = pingStatsHtml
+            ;(document.getElementById('pingStats') as HTMLDivElement).innerHTML = pingStatsHtml
         })
 
-        const terrainLoaded = () => {
-            this.start = new Start(
-                this.scene,
-                this.world,
-                this.gltfLoader,
-                this.textureLoader,
-                this.car.frameBody.id,
-                this.ui,
-                this.socket
-            )
-            this.finish = new Finish(
-                this.scene,
-                this.gltfLoader,
-                this.textureLoader
-            )
+        this.start = new Start(this)
 
-            //load obstacles now that terrain height calculated
+        this.finish = new Finish(this)
 
-            // a seedable RNG. https://gist.github.com/blixt/f17b47c62508be59987b
-            // so that obstacles are positioned the same each game.
-            const LCG = (s: number) => (_: number) =>
-                (s = Math.imul(741103597, s) >>> 0) / 2 ** 32
-            const nextRandom = LCG(3816034944)
+        this.unicorn = new Unicorn(this)
 
-            this.boulders = new Boulders(
-                this.scene,
-                this.world,
-                this.terrain,
-                25,
-                this.textureLoader,
-                this.raycaster,
-                nextRandom
-            )
+        this.mushroom = new Mushroom(this)
 
-            this.logs = new Logs(
-                this.scene,
-                this.world,
-                this.terrain,
-                25,
-                this.gltfLoader,
-                this.textureLoader,
-                this.raycaster,
-                nextRandom
-            )
+        this.pumpkin = new Pumpkin(this)
 
-            new Trees(
-                this.scene,
-                this.terrain,
-                [50, 50, 50],
-                this.gltfLoader,
-                this.raycaster,
-                nextRandom
-            )
+        this.duck = new Duck(this)
 
-            new Unicorn(this.scene, this.terrain, gltfLoader, raycaster)
+        this.chicken = new Chicken(this)
 
-            new Mushroom(this.scene, this.terrain, gltfLoader, raycaster)
+        this.shoeBill = new Shoebill(this)
 
-            new Pumpkin(this.scene, this.terrain, gltfLoader, raycaster)
+        this.spider = new Spider(this)
 
-            new Duck(this.scene, this.terrain, gltfLoader, raycaster)
+        this.leprechaun = new Leprechaun(this)
 
-            new Chicken(this.scene, this.terrain, gltfLoader, raycaster)
+        this.coins = new Coins(this)
 
-            new Shoebill(this.scene, this.terrain, gltfLoader, raycaster)
+        this.rainbow = new Rainbow(this)
 
-            new Spider(this.scene, this.terrain, gltfLoader, raycaster)
+        const terrainLoadedCallBack = () => {
+            this.start?.configure(this)
+            this.finish?.configure(this)
+            this.unicorn?.configure(this)
+            this.mushroom?.configure(this)
+            this.pumpkin?.configure(this)
+            this.duck?.configure(this)
+            this.chicken?.configure(this)
+            this.shoeBill?.configure(this)
+            this.spider?.configure(this)
+            this.leprechaun?.configure(this)
+            this.coins?.configure(this)
 
-            new Leprechaun(this.scene, this.terrain, gltfLoader, raycaster)
+            const bouldersLoadedCallBack = () => {
+                this.boulders?.configure(this)
+            }
+            this.boulders = new Boulders(this, 25, bouldersLoadedCallBack)
 
-            new Coins(this.scene, this.terrain, gltfLoader, raycaster)
+            const logsLoadedCallBack = () => {
+                this.logs?.configure(this)
+            }
+            this.logs = new Logs(this, 25, logsLoadedCallBack)
 
-            this.rainbow = new Rainbow(this.scene, this.terrain, gltfLoader)
+            const treesLoadedCallBack = () => {
+                this.trees?.configure(this)
+            }
+            this.trees = new Trees(this, [50, 50, 50], treesLoadedCallBack)
+
+            this.renderer.compile(this.scene, this.camera)
 
             this.update = (delta: number) => {
                 this.car.update(delta, this.camera, this.ui),
@@ -262,15 +233,45 @@ export default class Game {
                 })
             }
         }
+        this.terrain = new Terrain(this, terrainLoadedCallBack)
+    }
 
-        this.terrain = new Terrain(
-            scene,
-            world,
-            gltfLoader,
-            textureLoader,
-            raycaster,
-            terrainLoaded
-        )
+    setupTrack(track: string) {
+        this.activeTrack = track
+        this.terrain.setupTrack(track)
+        this.start?.configure(this)
+        this.finish?.configure(this)
+
+        this.nextRandom = LCG(this.seed)
+
+        this.boulders?.configure(this)
+        this.logs?.configure(this)
+        this.trees?.configure(this)
+        this.unicorn?.configure(this)
+        this.mushroom?.configure(this)
+        this.pumpkin?.configure(this)
+        this.duck?.configure(this)
+        this.chicken?.configure(this)
+        this.shoeBill?.configure(this)
+        this.spider?.configure(this)
+        this.leprechaun?.configure(this)
+        this.coins?.configure(this)
+    }
+
+    setupCar() {
+        switch (this.activeTrack) {
+            case 'track0':
+                this.car.spawn(new Vector3(0, 506, 780))
+                break
+            case 'track1':
+                this.car.spawn(new Vector3(0, 5, 780))
+                break
+            case 'track2':
+                this.car.spawn(new Vector3(0, 5, 780))
+                break
+        }
+
+        this.car.enabled = true
     }
 
     update(delta: number) {

@@ -1,20 +1,14 @@
-import { Group, Mesh, MeshStandardMaterial, Scene, Vector3 } from 'three'
-import Terrain from './terrain'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { Group, Mesh, MeshStandardMaterial, Vector3 } from 'three'
+import Game from './game'
 
 export default class Rainbow {
-    constructor(scene: Scene, terrain: Terrain, gltfLoader: GLTFLoader) {
-        gltfLoader.load('./models/rainbow.glb', (gltf) => {
+    constructor(game: Game) {
+        game.gltfLoader.load('./models/rainbow.glb', (gltf) => {
             const mesh = gltf.scene as Group
             mesh.scale.setScalar(200)
-            console.log(mesh.children[0])
-            ;(
-                (mesh.children[0] as Mesh).material as MeshStandardMaterial
-            ).transparent = true
-            ;(
-                (mesh.children[0] as Mesh).material as MeshStandardMaterial
-            ).opacity = 0.5
-            scene.add(mesh)
+            ;((mesh.children[0] as Mesh).material as MeshStandardMaterial).transparent = true
+            ;((mesh.children[0] as Mesh).material as MeshStandardMaterial).opacity = 0.5
+            game.scene.add(mesh)
 
             this.update = (position: Vector3) => {
                 mesh.position.x = position.x - 75

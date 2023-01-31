@@ -18,5 +18,7 @@ export default class Player {
 
     t = -1 // ping timestamp
 
+    at = "track0" // activeTrack
+
     constructor() {}
 }

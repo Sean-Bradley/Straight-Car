@@ -1,29 +1,8 @@
-import {
-    Scene,
-    Mesh,
-    Group,
-    Vector3,
-    Object3D,
-    MeshStandardMaterial,
-    Color,
-    AudioListener,
-    PositionalAudio,
-    AudioLoader,
-    Audio,
-} from 'three'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import {
-    World,
-    Body,
-    HingeConstraint,
-    Sphere,
-    Vec3,
-    Quaternion,
-    ContactEquation,
-} from 'cannon-es'
+import { Mesh, Group, Vector3, Object3D, MeshStandardMaterial, Color, AudioListener, PositionalAudio, AudioLoader, Audio, MathUtils } from 'three'
+import { Body, HingeConstraint, Sphere, Vec3, Quaternion } from 'cannon-es'
 import UI from './ui'
 import Explosion from './explosion'
-import { Socket } from 'socket.io-client'
+import Game from './game'
 
 export default class Car {
     enabled: Boolean
@@ -52,9 +31,7 @@ export default class Car {
     private v = new Vector3()
     private cameraPivot = new Object3D()
 
-    private scene: Scene
-    private world: World
-    private socket: Socket
+    private game: Game
 
     private startEngineSound?: Audio
     private carEngineSound?: PositionalAudio
@@ -66,24 +43,17 @@ export default class Car {
     private bodyUp = new Vector3()
     private down = new Vector3(0, -1, 0)
     private respawnMessage: HTMLDivElement
+    private startPosition = new Vector3()
 
-    constructor(
-        scene: Scene,
-        world: World,
-        loader: GLTFLoader,
-        socket: Socket
-    ) {
-        //, completeCB: (id: number) => void) {
+    constructor(game: Game) {
         this.enabled = false
-        this.scene = scene
-        this.world = world
-        this.socket = socket
+        this.game = game
 
         const explosions: { [id: string]: Explosion } = {}
-        explosions[0] = new Explosion(new Color(0xff0000), scene)
-        explosions[1] = new Explosion(new Color(0x00ff00), scene)
-        explosions[2] = new Explosion(new Color(0x0000ff), scene)
-        explosions[3] = new Explosion(new Color(0xffff00), scene)
+        explosions[0] = new Explosion(new Color(0xff0000), game.scene)
+        explosions[1] = new Explosion(new Color(0x00ff00), game.scene)
+        explosions[2] = new Explosion(new Color(0x0000ff), game.scene)
+        explosions[3] = new Explosion(new Color(0xffff00), game.scene)
         this.explosions = explosions
 
         const pipesMaterial = new MeshStandardMaterial()
@@ -91,7 +61,7 @@ export default class Car {
         pipesMaterial.roughness = 0.2
         pipesMaterial.metalness = 1
 
-        loader.load('./models/frame.glb', (gltf) => {
+        game.gltfLoader.load('./models/frame.glb', (gltf) => {
             this.frameMesh = gltf.scene.children[0] as THREE.Mesh
             this.frameMesh.material = pipesMaterial
             //this.frameMesh.castShadow = true
@@ -99,9 +69,9 @@ export default class Car {
             this.cameraPivot.position.set(2.5, 2.5, 2.5)
             this.frameMesh.add(this.cameraPivot)
 
-            scene.add(this.frameMesh)
+            game.scene.add(this.frameMesh)
         })
-        loader.load(
+        game.gltfLoader.load(
             'models/tyre.glb',
             (gltf) => {
                 this.wheelLFMesh = gltf.scene
@@ -111,10 +81,10 @@ export default class Car {
                 this.wheelRBMesh = this.wheelLFMesh.clone()
                 this.wheelLFMesh.scale.setScalar(0.87)
                 this.wheelRFMesh.scale.setScalar(0.87)
-                scene.add(this.wheelLFMesh)
-                scene.add(this.wheelRFMesh)
-                scene.add(this.wheelLBMesh)
-                scene.add(this.wheelRBMesh)
+                game.scene.add(this.wheelLFMesh)
+                game.scene.add(this.wheelRFMesh)
+                game.scene.add(this.wheelLBMesh)
+                game.scene.add(this.wheelRBMesh)
             },
             (xhr) => {
                 console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
@@ -134,9 +104,7 @@ export default class Car {
         this.frameBody.addEventListener('collide', (e: any) => {
             const r = Math.round(Math.random()) // 1 or 0
             if (this.rattleSound[r] !== undefined) {
-                this.rattleSound[r].setVolume(
-                    Math.abs(e.contact.getImpactVelocityAlongNormal()) / 25
-                )
+                this.rattleSound[r].setVolume(Math.abs(e.contact.getImpactVelocityAlongNormal()) / 25)
                 if (this.rattleSound[r].isPlaying) this.rattleSound[r].stop()
                 this.rattleSound[r].play()
             }
@@ -170,55 +138,37 @@ export default class Car {
         this.wheelRBBody.addShape(wheelRBShape)
         this.wheelRBBody.position.set(1, 0, 1)
 
-        this.constraintLF = new HingeConstraint(
-            this.frameBody,
-            this.wheelLFBody,
-            {
-                pivotA: new Vec3(-1, 0, -1),
-                axisA: new Vec3(1, -0.25, 0),
-            }
-        )
-        world.addConstraint(this.constraintLF)
-        this.constraintRF = new HingeConstraint(
-            this.frameBody,
-            this.wheelRFBody,
-            {
-                pivotA: new Vec3(1, 0, -1),
-                axisA: new Vec3(1, 0.25, 0),
-            }
-        )
-        world.addConstraint(this.constraintRF)
-        this.constraintLB = new HingeConstraint(
-            this.frameBody,
-            this.wheelLBBody,
-            {
-                pivotA: new Vec3(-1, 0, 1),
-                axisA: new Vec3(1, -0.25, 0),
-            }
-        )
-        world.addConstraint(this.constraintLB)
-        this.constraintRB = new HingeConstraint(
-            this.frameBody,
-            this.wheelRBBody,
-            {
-                pivotA: new Vec3(1, 0, 1),
-                axisA: new Vec3(1, 0.25, 0),
-            }
-        )
-        world.addConstraint(this.constraintRB)
+        this.constraintLF = new HingeConstraint(this.frameBody, this.wheelLFBody, {
+            pivotA: new Vec3(-1, 0, -1),
+            axisA: new Vec3(1, -0.25, 0),
+        })
+        game.world.addConstraint(this.constraintLF)
+        this.constraintRF = new HingeConstraint(this.frameBody, this.wheelRFBody, {
+            pivotA: new Vec3(1, 0, -1),
+            axisA: new Vec3(1, 0.25, 0),
+        })
+        game.world.addConstraint(this.constraintRF)
+        this.constraintLB = new HingeConstraint(this.frameBody, this.wheelLBBody, {
+            pivotA: new Vec3(-1, 0, 1),
+            axisA: new Vec3(1, -0.25, 0),
+        })
+        game.world.addConstraint(this.constraintLB)
+        this.constraintRB = new HingeConstraint(this.frameBody, this.wheelRBBody, {
+            pivotA: new Vec3(1, 0, 1),
+            axisA: new Vec3(1, 0.25, 0),
+        })
+        game.world.addConstraint(this.constraintRB)
 
         // //rear wheel drive
         this.constraintLB.enableMotor()
         this.constraintRB.enableMotor()
 
-        this.respawnMessage = document.getElementById(
-            'respawnMessage'
-        ) as HTMLDivElement
+        this.respawnMessage = document.getElementById('respawnMessage') as HTMLDivElement
         setInterval(() => {
             if (this.enabled) {
                 if (this.isUpsideDown()) {
                     this.upsideDownCounter += 1
-                    if (this.upsideDownCounter > 3) {
+                    if (this.upsideDownCounter > 4) {
                         console.log('show respawn message')
                         this.respawnMessage.style.display = 'block'
                     } else {
@@ -233,9 +183,7 @@ export default class Car {
     }
 
     isUpsideDown() {
-        this.bodyUp
-            .copy(this.frameMesh.up)
-            .applyQuaternion(this.frameMesh.quaternion)
+        this.bodyUp.copy(this.frameMesh.up).applyQuaternion(this.frameMesh.quaternion)
         //console.log(this.down.dot(bodyUp))
         if (this.down.dot(this.bodyUp) > 0) {
             return true
@@ -265,18 +213,14 @@ export default class Car {
 
             this.frameMesh.add(this.carEngineSound as PositionalAudio)
 
-            this.rattleSound.push(
-                new PositionalAudio(listener as AudioListener)
-            )
+            this.rattleSound.push(new PositionalAudio(listener as AudioListener))
             audioLoader?.load('./sounds/crash.wav', (buffer) => {
                 this.rattleSound[0].setBuffer(buffer)
                 this.rattleSound[0].setLoop(false)
             })
             this.frameMesh.add(this.rattleSound[0] as PositionalAudio)
 
-            this.rattleSound.push(
-                new PositionalAudio(listener as AudioListener)
-            )
+            this.rattleSound.push(new PositionalAudio(listener as AudioListener))
             audioLoader?.load('./sounds/crash2.wav', (buffer) => {
                 this.rattleSound[1].setBuffer(buffer)
                 this.rattleSound[1].setLoop(false)
@@ -320,7 +264,9 @@ export default class Car {
             if (ui.keyMap['KeyR']) {
                 if (!this.KeyRHeldDown) {
                     this.KeyRHeldDown = true
-                    this.spawn(new Vector3(0, 10, 780))
+                    this.game.setupTrack(this.game.activeTrack)
+                    this.game.setupCar()
+                    //this.spawn(this.startPosition)
                     this.playCarSounds()
                     ui.resetTimer()
                 }
@@ -405,94 +351,76 @@ export default class Car {
 
             this.cameraPivot.getWorldPosition(this.v)
             this.v.y = Math.max(this.frameMesh.position.y + 2.5, this.v.y)
-            camera.position.lerp(this.v, delta * 3)
+
+            this.game.activeTrack !== 'track0'
+                ? camera.position.lerp(this.v, delta * 3)
+                : //makes the camera y lerp faster
+                  ((camera.position.x = MathUtils.lerp(camera.position.x, this.v.x, delta * 3)),
+                  (camera.position.y = MathUtils.lerp(camera.position.y, this.v.y, delta * 5)),
+                  (camera.position.z = MathUtils.lerp(camera.position.z, this.v.z, delta * 3)))
+
             camera.lookAt(this.frameMesh.position)
 
             Object.keys(this.explosions).forEach((o) => {
                 this.explosions[o].update()
             })
-            ;(this.carEngineSound as PositionalAudio).setPlaybackRate(
-                Math.abs(this.forwardVelocity / 35) + Math.random() / 9
-            )
+            ;(this.carEngineSound as PositionalAudio).setPlaybackRate(Math.abs(this.forwardVelocity / 35) + Math.random() / 9)
         }
     }
 
     spawn(startPosition: Vector3) {
-        this.socket.emit('spawn', {})
+        this.startPosition = startPosition
+
+        this.game.socket.emit('spawn', {})
 
         this.enabled = false
         //this.hasWon = false
         this.explosionCounter = 0
 
-        this.world.removeBody(this.frameBody)
-        this.world.removeBody(this.wheelLFBody)
-        this.world.removeBody(this.wheelRFBody)
-        this.world.removeBody(this.wheelLBBody)
-        this.world.removeBody(this.wheelRBBody)
+        this.game.world.removeBody(this.frameBody)
+        this.game.world.removeBody(this.wheelLFBody)
+        this.game.world.removeBody(this.wheelRFBody)
+        this.game.world.removeBody(this.wheelLBBody)
+        this.game.world.removeBody(this.wheelRBBody)
 
         this.forwardVelocity = 0
 
         const o = new Object3D()
-        o.position.copy(startPosition)
-        const q = new Quaternion().set(
-            o.quaternion.x,
-            o.quaternion.y,
-            o.quaternion.z,
-            o.quaternion.w
-        )
+        o.position.copy(this.startPosition)
+        const q = new Quaternion().set(o.quaternion.x, o.quaternion.y, o.quaternion.z, o.quaternion.w)
 
         this.frameBody.velocity.set(0, 0, 0)
         this.frameBody.angularVelocity.set(0, 0, 0)
-        this.frameBody.position.set(
-            startPosition.x,
-            startPosition.y,
-            startPosition.z
-        )
+        this.frameBody.position.set(this.startPosition.x, this.startPosition.y, this.startPosition.z)
         this.frameBody.quaternion.copy(q)
 
         this.wheelLFBody.velocity.set(0, 0, 0)
         this.wheelLFBody.angularVelocity.set(0, 0, 0)
-        this.wheelLFBody.position.set(
-            startPosition.x - 1,
-            startPosition.y,
-            startPosition.z - 1
-        )
+        this.wheelLFBody.position.set(this.startPosition.x - 1, this.startPosition.y, this.startPosition.z - 1)
         this.wheelLFBody.quaternion.copy(q)
 
         this.wheelRFBody.velocity.set(0, 0, 0)
         this.wheelRFBody.angularVelocity.set(0, 0, 0)
-        this.wheelRFBody.position.set(
-            startPosition.x + 1,
-            startPosition.y,
-            startPosition.z - 1
-        )
+        this.wheelRFBody.position.set(this.startPosition.x + 1, this.startPosition.y, this.startPosition.z - 1)
         this.wheelRFBody.quaternion.copy(q)
 
         this.wheelLBBody.velocity.set(0, 0, 0)
         this.wheelLBBody.angularVelocity.set(0, 0, 0)
-        this.wheelLBBody.position.set(
-            startPosition.x - 1,
-            startPosition.y,
-            startPosition.z + 1
-        )
+        this.wheelLBBody.position.set(this.startPosition.x - 1, this.startPosition.y, this.startPosition.z + 1)
         this.wheelLBBody.quaternion.copy(q)
 
         this.wheelRBBody.velocity.set(0, 0, 0)
         this.wheelRBBody.angularVelocity.set(0, 0, 0)
-        this.wheelRBBody.position.set(
-            startPosition.x + 1,
-            startPosition.y,
-            startPosition.z + 1
-        )
+        this.wheelRBBody.position.set(this.startPosition.x + 1, this.startPosition.y, this.startPosition.z + 1)
         this.wheelRBBody.quaternion.copy(q)
 
-        this.world.step(0.001) //apply above changes
+        this.game.world.step(0.001) //apply above changes
 
-        this.world.addBody(this.frameBody)
-        this.world.addBody(this.wheelLFBody)
-        this.world.addBody(this.wheelRFBody)
-        this.world.addBody(this.wheelLBBody)
-        this.world.addBody(this.wheelRBBody)
+        this.game.world.addBody(this.frameBody)
+        this.game.world.addBody(this.wheelLFBody)
+        this.game.world.addBody(this.wheelRFBody)
+        this.game.world.addBody(this.wheelLBBody)
+        this.game.world.addBody(this.wheelRBBody)
 
         this.fix()
 
@@ -506,10 +434,10 @@ export default class Car {
         //this.enabled = false
         console.log('in explode')
 
-        this.world.removeConstraint(this.constraintLF)
-        this.world.removeConstraint(this.constraintRF)
-        this.world.removeConstraint(this.constraintLB)
-        this.world.removeConstraint(this.constraintRB)
+        this.game.world.removeConstraint(this.constraintLF)
+        this.game.world.removeConstraint(this.constraintRF)
+        this.game.world.removeConstraint(this.constraintLB)
+        this.game.world.removeConstraint(this.constraintRB)
 
         const v = this.frameBody.velocity
         v.y *= 3
@@ -524,9 +452,7 @@ export default class Car {
         this.winnerAnimationInterval === undefined &&
             (this.winnerAnimationInterval = setInterval(() => {
                 //console.log("winnerAnimationInterval setInterval")
-                this.explosions[this.explosionCounter].explode(
-                    this.frameMesh.position
-                )
+                this.explosions[this.explosionCounter].explode(this.frameMesh.position)
                 this.explosionCounter += 1
                 if (this.explosionCounter > 3) {
                     this.explosionCounter = 0
@@ -537,12 +463,12 @@ export default class Car {
     fix() {
         clearInterval(this.winnerAnimationInterval)
         this.winnerAnimationInterval = undefined
-        if (this.world.constraints.length === 0) {
+        if (this.game.world.constraints.length === 0) {
             console.log('fixing')
-            this.world.addConstraint(this.constraintLF)
-            this.world.addConstraint(this.constraintRF)
-            this.world.addConstraint(this.constraintLB)
-            this.world.addConstraint(this.constraintRB)
+            this.game.world.addConstraint(this.constraintLF)
+            this.game.world.addConstraint(this.constraintRF)
+            this.game.world.addConstraint(this.constraintLB)
+            this.game.world.addConstraint(this.constraintRB)
         }
     }
 }

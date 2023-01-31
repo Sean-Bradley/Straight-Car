@@ -3,6 +3,7 @@ import Stats from 'three/examples/jsm/libs/stats.module'
 import * as CANNON from 'cannon-es'
 import CannonDebugRenderer from './utils/cannonDebugRenderer'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
@@ -11,22 +12,14 @@ import Game from './game'
 
 const scene = new THREE.Scene()
 
-new RGBELoader().load(
-    './img/kloppenheim_06_puresky_1k.hdr',
-    function (texture: THREE.Texture) {
-        texture.mapping = THREE.EquirectangularReflectionMapping
-        scene.background = texture
-        scene.environment = texture
-    }
-)
+new RGBELoader().load('./img/kloppenheim_06_puresky_1k.hdr', function (texture: THREE.Texture) {
+    texture.mapping = THREE.EquirectangularReflectionMapping
+    scene.background = texture
+    scene.environment = texture
+})
 
-const cameraStartPosition = new THREE.Vector3(20, 25, 20)
-const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-)
+const cameraStartPosition = new THREE.Vector3(20, 230, 20)
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 camera.position.copy(cameraStartPosition)
 
 const renderer = new THREE.WebGLRenderer()
@@ -43,7 +36,7 @@ labelRenderer.domElement.style.pointerEvents = 'none'
 document.body.appendChild(labelRenderer.domElement)
 
 const controls = new OrbitControls(camera, renderer.domElement)
-controls.target.set(0, 18, 0)
+controls.target.set(0, 230, 0)
 controls.autoRotate = true
 // controls.keys = {
 //     LEFT: 'ArrowLeft', //left arrow
@@ -74,18 +67,15 @@ light.target = worldCenter
 scene.add(light)
 
 const gltfLoader = new GLTFLoader()
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('/draco/')
+gltfLoader.setDRACOLoader(dracoLoader)
+
 const textureLoader = new THREE.TextureLoader()
+
 const raycaster = new THREE.Raycaster()
 
-const game = new Game(
-    scene,
-    world,
-    camera,
-    controls,
-    gltfLoader,
-    textureLoader,
-    raycaster
-)
+const game = new Game(scene, world, camera, renderer, controls, gltfLoader, textureLoader, raycaster)
 
 renderer.compile(scene, camera)
 
@@ -110,7 +100,7 @@ function animate() {
 
     let delta = Math.min(clock.getDelta(), 0.1)
     world.step(delta)
-    // cannonDebugRenderer.update()
+    //cannonDebugRenderer.update()
 
     game.update(delta)
 
