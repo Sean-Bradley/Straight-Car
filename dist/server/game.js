@@ -15,7 +15,7 @@ class Game {
             let lowestScoreScreenName = '';
             //add all players with score > 0
             Object.keys(this.players).forEach((p) => {
-                if (this.players[p].r > 60 && this.players[p].f) { // > 60
+                if (this.players[p].r > 40 && this.players[p].f) { // > 40
                     this.recentWinners[this.players[p].at].push({
                         screenName: this.players[p].sn,
                         score: this.players[p].r, // race time
@@ -37,6 +37,8 @@ class Game {
             this.winnersCalculated = true;
         };
         this.recentWinners['track0'] = [
+            { screenName: 'sbcode', score: 66.2 },
+            { screenName: 'seanwasere', score: 88.5 },
             { screenName: 'seanwasere', score: 90.3 },
             { screenName: 'seanwasere', score: 91.5 }
         ];
