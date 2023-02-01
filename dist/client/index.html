@@ -2,10 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
-        />
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <title>Three.js TypeScript Tutorials by Sean Bradley</title>
         <style>
@@ -236,7 +233,7 @@
                 user-select: none;
             }
 
-            @media only screen and (max-width: 375px) {
+            @media only screen and (max-width: 415px) {
                 #pingStats {
                     display: none;
                 }
@@ -256,14 +253,21 @@
                     font-size: 14px;
                 }
 
+                .button {
+                    width: 90px;
+                    padding: 6px 6px;
+                    font-size: 16px;
+                    margin: 10px 2px;
+                }
+
                 #recentWinnersTable {
                     position: absolute;
-                    width: 100px;
-                    height: 120px;
+                    width: 120px;
+                    height: 160px;
                     border: 1px solid gray;
-                    right: 10px;
+                    right: 2px;
                     top: 10px;
-                    font-size: 14px;
+                    font-size: 12px;
                     display: none;
                     filter: drop-shadow(1px 1px 1px black);
                 }
@@ -278,11 +282,7 @@
                 <h2>You can only drive straight</h2>
                 <p>
                     GitHub :
-                    <a
-                        href="https://github.com/Sean-Bradley/Straight-Car"
-                        target="_blank"
-                        >https://github.com/Sean-Bradley/Straight-Car</a
-                    >
+                    <a href="https://github.com/Sean-Bradley/Straight-Car" target="_blank">https://github.com/Sean-Bradley/Straight-Car</a>
                 </p>
                 <div id="keyboardControls">
                     Forward : <kbd>W</kbd> or <kbd>Arrow Up</kbd><br />
@@ -292,31 +292,18 @@
                 </div>
                 <div>
                     <label>Player Name :</label>
-                    <input
-                        type="text"
-                        id="screenNameInput"
-                        maxlength="12"
-                        onClick="this.select();"
-                    />
+                    <input type="text" id="screenNameInput" maxlength="12" onClick="this.select();" />
                 </div>
                 <button id="startButton0" class="button">Easy</button>
                 <button id="startButton1" class="button">Hard</button>
                 <button id="startButton2" class="button">Impossible</button>
                 <p>
-                    This is a multiplayer game constructed using Threejs,
-                    SocketIO and Cannon physics.<br />
-                    It is supplemental to my Three.js and TypeScript tutorials
-                    at<br />
-                    <a href="https://sbcode.net/threejs/" target="_blank"
-                        >https://sbcode.net/threejs/</a
-                    >
+                    This is a multiplayer game constructed using Threejs, SocketIO and Cannon physics.<br />
+                    It is supplemental to my Three.js and TypeScript tutorials at<br />
+                    <a href="https://sbcode.net/threejs/" target="_blank">https://sbcode.net/threejs/</a>
                 </p>
                 <p>
-                    <a
-                        href="https://github.com/Sean-Bradley/Straight-Car/blob/main/LICENSE"
-                        target="_blank"
-                        >Credits/Licenses</a
-                    >
+                    <a href="https://github.com/Sean-Bradley/Straight-Car/blob/main/LICENSE" target="_blank">Credits/Licenses</a>
                 </p>
             </div>
         </div>

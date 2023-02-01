@@ -37,6 +37,7 @@ class Game {
             this.winnersCalculated = true;
         };
         this.recentWinners['track0'] = [
+            { screenName: 'sbcode', score: 58.4 },
             { screenName: 'sbcode', score: 66.2 },
             { screenName: 'seanwasere', score: 88.5 },
             { screenName: 'seanwasere', score: 90.3 },
