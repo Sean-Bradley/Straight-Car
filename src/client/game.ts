@@ -8,15 +8,15 @@ import Logs from './logs'
 import Trees from './trees'
 import Start from './start'
 import Finish from './finish'
-import Unicorn from './unicorn'
-import Mushroom from './mushroom'
-import Pumpkin from './pumpkin'
-import Duck from './duck'
-import Chicken from './chicken'
-import Shoebill from './shoebill'
-import Spider from './spider'
-import Leprechaun from './leprechaun'
-import Coins from './coins'
+// import Unicorn from './unicorn'
+// import Mushroom from './mushroom'
+// import Pumpkin from './pumpkin'
+// import Duck from './duck'
+// import Chicken from './chicken'
+// import Shoebill from './shoebill'
+// import Spider from './spider'
+// import Leprechaun from './leprechaun'
+// import Coins from './coins'
 import Rainbow from './rainbow'
 import UI from './ui'
 import { io } from 'socket.io-client'
@@ -47,15 +47,15 @@ export default class Game {
     textureLoader: TextureLoader
     raycaster: Raycaster
 
-    unicorn?: Unicorn
-    mushroom?: Mushroom
-    pumpkin?: Pumpkin
-    duck?: Duck
-    chicken?: Chicken
-    shoeBill?: Shoebill
-    spider?: Spider
-    leprechaun?: Leprechaun
-    coins?: Coins
+    // unicorn?: Unicorn
+    // mushroom?: Mushroom
+    // pumpkin?: Pumpkin
+    // duck?: Duck
+    // chicken?: Chicken
+    // shoeBill?: Shoebill
+    // spider?: Spider
+    // leprechaun?: Leprechaun
+    // coins?: Coins
 
     rainbow?: Rainbow
 
@@ -171,38 +171,38 @@ export default class Game {
 
         this.finish = new Finish(this)
 
-        this.unicorn = new Unicorn(this)
+        // this.unicorn = new Unicorn(this)
 
-        this.mushroom = new Mushroom(this)
+        // this.mushroom = new Mushroom(this)
 
-        this.pumpkin = new Pumpkin(this)
+        // this.pumpkin = new Pumpkin(this)
 
-        this.duck = new Duck(this)
+        // this.duck = new Duck(this)
 
-        this.chicken = new Chicken(this)
+        // this.chicken = new Chicken(this)
 
-        this.shoeBill = new Shoebill(this)
+        // this.shoeBill = new Shoebill(this)
 
-        this.spider = new Spider(this)
+        // this.spider = new Spider(this)
 
-        this.leprechaun = new Leprechaun(this)
+        // this.leprechaun = new Leprechaun(this)
 
-        this.coins = new Coins(this)
+        // this.coins = new Coins(this)
 
         this.rainbow = new Rainbow(this)
 
         const terrainLoadedCallBack = () => {
             this.start?.configure(this)
             this.finish?.configure(this)
-            this.unicorn?.configure(this)
-            this.mushroom?.configure(this)
-            this.pumpkin?.configure(this)
-            this.duck?.configure(this)
-            this.chicken?.configure(this)
-            this.shoeBill?.configure(this)
-            this.spider?.configure(this)
-            this.leprechaun?.configure(this)
-            this.coins?.configure(this)
+            // this.unicorn?.configure(this)
+            // this.mushroom?.configure(this)
+            // this.pumpkin?.configure(this)
+            // this.duck?.configure(this)
+            // this.chicken?.configure(this)
+            // this.shoeBill?.configure(this)
+            // this.spider?.configure(this)
+            // this.leprechaun?.configure(this)
+            // this.coins?.configure(this)
 
             const bouldersLoadedCallBack = () => {
                 this.boulders?.configure(this)
@@ -232,6 +232,7 @@ export default class Game {
                     this.players[p].update()
                 })
             }
+            this.ui.loaded()
         }
         this.terrain = new Terrain(this, terrainLoadedCallBack)
     }
@@ -247,15 +248,15 @@ export default class Game {
         this.boulders?.configure(this)
         this.logs?.configure(this)
         this.trees?.configure(this)
-        this.unicorn?.configure(this)
-        this.mushroom?.configure(this)
-        this.pumpkin?.configure(this)
-        this.duck?.configure(this)
-        this.chicken?.configure(this)
-        this.shoeBill?.configure(this)
-        this.spider?.configure(this)
-        this.leprechaun?.configure(this)
-        this.coins?.configure(this)
+        // this.unicorn?.configure(this)
+        // this.mushroom?.configure(this)
+        // this.pumpkin?.configure(this)
+        // this.duck?.configure(this)
+        // this.chicken?.configure(this)
+        // this.shoeBill?.configure(this)
+        // this.spider?.configure(this)
+        // this.leprechaun?.configure(this)
+        // this.coins?.configure(this)
     }
 
     setupCar() {

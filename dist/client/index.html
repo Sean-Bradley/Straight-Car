@@ -83,6 +83,15 @@
                 opacity: 1;
             }
 
+            #loading {
+                display: block;
+                font-size: 36px;
+            }
+
+            #buttons {
+                display: none;
+            }
+
             .noselect {
                 -webkit-touch-callout: none; /* iOS Safari */
                 -webkit-user-select: none; /* Safari */
@@ -228,10 +237,6 @@
                 bottom: 64px;
                 display: none;
             }
-            #mobileButtons {
-                pointer-events: none;
-                user-select: none;
-            }
 
             @media only screen and (max-width: 415px) {
                 #pingStats {
@@ -263,7 +268,7 @@
                 #recentWinnersTable {
                     position: absolute;
                     width: 120px;
-                    height: 160px;
+                    height: 190px;
                     border: 1px solid gray;
                     right: 2px;
                     top: 10px;
@@ -290,13 +295,16 @@
                     Brakes : <kbd>Space</kbd><br />
                     Respawn : <kbd>R</kbd>
                 </div>
-                <div>
-                    <label>Player Name :</label>
-                    <input type="text" id="screenNameInput" maxlength="12" onClick="this.select();" />
+                <div id="loading"><p>Loading ...</p></div>
+                <div id="buttons">
+                    <div>
+                        <label>Player Name :</label>
+                        <input type="text" id="screenNameInput" maxlength="12" onClick="this.select();" />
+                    </div>
+                    <button id="startButton0" class="button">Easy</button>
+                    <button id="startButton1" class="button">Hard</button>
+                    <button id="startButton2" class="button">Impossible</button>
                 </div>
-                <button id="startButton0" class="button">Easy</button>
-                <button id="startButton1" class="button">Hard</button>
-                <button id="startButton2" class="button">Impossible</button>
                 <p>
                     This is a multiplayer game constructed using Threejs, SocketIO and Cannon physics.<br />
                     It is supplemental to my Three.js and TypeScript tutorials at<br />

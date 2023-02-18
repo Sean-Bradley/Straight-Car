@@ -11,8 +11,10 @@ export default class UI {
     fwdButton = document.getElementById('fwdButton') as HTMLButtonElement
     bwdButton = document.getElementById('bwdButton') as HTMLButtonElement
     respawnButton = document.getElementById('respawnButton') as HTMLButtonElement
-    brakeButton = document.getElementById('brakeButton') as HTMLButtonElement
+    brakeButton = document.getElementById('brakeButton') as HTMLButtonElement   
     menuPanel = document.getElementById('menuPanel') as HTMLDivElement
+    loading = document.getElementById('loading') as HTMLDivElement
+    buttons = document.getElementById('buttons') as HTMLDivElement
     gameClock = document.getElementById('gameClock') as HTMLDivElement
     winnerPanel = document.getElementById('winnerPanel') as HTMLDivElement
     screenNameInput = document.getElementById('screenNameInput') as HTMLInputElement
@@ -219,5 +221,10 @@ export default class UI {
                 })
             }
         })
+    }
+
+    loaded() {
+        this.loading.style.display = 'none'
+        this.buttons.style.display = 'block'
     }
 }

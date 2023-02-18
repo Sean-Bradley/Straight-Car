@@ -9,15 +9,18 @@ export default class Game {
     winnersCalculated = false
 
     players: { [id: string]: Player } = {}
-    playerCount = 367
+    playerCount = 457
 
     constructor(io: socketIO.Server) {
         this.recentWinners['track0'] = [
             { screenName: 'sbcode', score: 58.4 },
+            { screenName: 'seanwasere', score: 66.1 },
             { screenName: 'sbcode', score: 66.2 },
+            { screenName: 'Guest377', score: 68 },
+            { screenName: 'Guest446', score: 86.9 },
             { screenName: 'seanwasere', score: 88.5 },
             { screenName: 'seanwasere', score: 90.3 },
-            { screenName: 'seanwasere', score: 91.5 }
+            { screenName: 'seanwasere', score: 91.5 },
         ]
         this.recentWinners['track1'] = [
             { screenName: 'sbcode', score: 232.5 },
@@ -79,7 +82,8 @@ export default class Game {
                         if (!this.players[socket.id].f) {
                             const totalTime = Math.round(((Date.now() - this.players[socket.id].s) / 1000) * 10) / 10
                             this.players[socket.id].r = totalTime // race time
-                            if (this.players[socket.id].p.z < -750) { //-750
+                            if (this.players[socket.id].p.z < -750) {
+                                //-750
                                 this.players[socket.id].f = true // at finish line
                                 this.recalcWinnersTable()
                                 socket.emit('winner', totalTime)
@@ -133,7 +137,8 @@ export default class Game {
 
         //add all players with score > 0
         Object.keys(this.players).forEach((p) => {
-            if (this.players[p].r > 40 && this.players[p].f) { // > 40
+            if (this.players[p].r > 40 && this.players[p].f) {
+                // > 40
                 this.recentWinners[this.players[p].at].push({
                     screenName: this.players[p].sn,
                     score: this.players[p].r, // race time
