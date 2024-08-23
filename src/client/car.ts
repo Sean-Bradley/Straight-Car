@@ -26,7 +26,7 @@ export default class Car {
     private explosions: { [id: string]: Explosion } = {}
     //hasWon = false
     explosionCounter = 0
-    winnerAnimationInterval?: NodeJS.Timer
+    winnerAnimationInterval?: NodeJS.Timeout | undefined
 
     private v = new Vector3()
     private cameraPivot = new Object3D()
