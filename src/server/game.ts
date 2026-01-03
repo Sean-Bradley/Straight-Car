@@ -13,14 +13,14 @@ export default class Game {
 
     constructor(io: socketIO.Server) {
         this.recentWinners['track0'] = [
+            { screenName: 'sbcode', score: 55.5 },
+            { screenName: 'Dragisa', score: 57.3 },
             { screenName: 'sbcode', score: 58.4 },
+            { screenName: 'Dragisa', score: 60.4 },
             { screenName: 'seanwasere', score: 66.1 },
             { screenName: 'sbcode', score: 66.2 },
-            { screenName: 'Guest377', score: 68 },
-            { screenName: 'Guest446', score: 86.9 },
-            { screenName: 'seanwasere', score: 88.5 },
-            { screenName: 'seanwasere', score: 90.3 },
-            { screenName: 'seanwasere', score: 91.5 },
+            { screenName: 'Deepak', score: 67.2 },
+            { screenName: 'sbcode', score: 68 },            
         ]
         this.recentWinners['track1'] = [
             { screenName: 'sbcode', score: 232.5 },
