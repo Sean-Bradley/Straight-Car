@@ -61,7 +61,7 @@ export default class Game {
 
     socket = io()
     myId = ''
-    updateInterval?: NodeJS.Timer //used to update server
+    updateInterval?:  NodeJS.Timeout | undefined //used to update server
     timestamp = 0
     players: { [id: string]: Player } = {}
 

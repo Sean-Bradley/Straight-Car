@@ -4,7 +4,7 @@ import Game from './game'
 export default class UI {
     keyMap: { [id: string]: boolean } = {}
     timerValue = 0
-    timerInterval?: NodeJS.Timer
+    timerInterval?: NodeJS.Timeout | undefined
     startButton0 = document.getElementById('startButton0') as HTMLButtonElement
     startButton1 = document.getElementById('startButton1') as HTMLButtonElement
     startButton2 = document.getElementById('startButton2') as HTMLButtonElement
